@@ -19,8 +19,8 @@ void partition_main(void *ptr)
 	uint32_t signals = 0;
 
 	printf("Partition: Initialised\n\r");
+
 	while (1) {
-		//part_stats();
 		signals = psa_wait_any(PSA_WAIT_BLOCK);
 
 		if (signals & SERVICE_MSK) {
@@ -28,7 +28,7 @@ void partition_main(void *ptr)
 			psa_get(signals, &msg);
 			switch(msg.type) {
 				case PSA_IPC_CONNECT:
-					printf("Parition: Got a connection!\n\r");
+					printf("Parition: Got a connection request!\n\r");
 					/* Only allowing requests from Non-Secure domain */
 					if (psa_identity(msg.handle) > 0) {
 						result = PSA_CONNECTION_REFUSED;
@@ -37,10 +37,10 @@ void partition_main(void *ptr)
 					}
 					break;
 				case PSA_IPC_CALL:
-					printf("Partition: Got an IPC call!\n\r");
+					printf("Partition: Received an IPC call!\n\r");
 					break;
 				case PSA_IPC_DISCONNECT:
-					printf("Partition: Connection was closed!\n\r");
+					printf("Partition: Connection was closed by client!\n\r");
 					break;
 				default:
 					abort();
